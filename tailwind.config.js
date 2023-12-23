@@ -8,10 +8,7 @@ module.exports = {
   theme: {
     extend: {},
   },
-  daisyui: {
-    themes: ["nord", "dracula"],
-    darkTheme: "dracula",
-  },
-  darkMode: ["class", '[data-theme="dracula"]'],
+  daisyui: {},
+
   plugins: [require("daisyui")],
 };

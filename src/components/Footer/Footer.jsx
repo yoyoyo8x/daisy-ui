@@ -4,33 +4,12 @@ const Footer = () => {
   return (
     <footer className="footer p-10 text-base-content">
       <nav>
-        <header className="footer-title">Services</header>
-        <Link href="#" className="link link-hover">
-          Branding
-        </Link>
-        <Link href="#" className="link link-hover">
-          Design
-        </Link>
-        <Link href="#" className="link link-hover">
-          Marketing
-        </Link>
-        <Link href="#" className="link link-hover">
-          Advertisement
-        </Link>
-      </nav>
-      <nav>
         <header className="footer-title">Company</header>
         <Link href="#" className="link link-hover">
           About us
         </Link>
         <Link href="#" className="link link-hover">
           Contact
-        </Link>
-        <Link href="#" className="link link-hover">
-          Jobs
-        </Link>
-        <Link href="#" className="link link-hover">
-          Press kit
         </Link>
       </nav>
       <nav>

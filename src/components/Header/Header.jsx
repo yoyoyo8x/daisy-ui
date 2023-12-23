@@ -1,69 +1,105 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
 import * as icon from "@/assets/index";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { total } from "@/redux/cartSlice";
+import { router } from "@/constant/router";
+import Cart from "../Cart/Cart";
 
 const Header = () => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") ? localStorage.getItem("theme") : "nord"
-  );
-
-  const handleToggle = (e) => {
-    if (e.target.checked) {
-      setTheme("dracula");
-    } else {
-      setTheme("nord");
-    }
-  };
+  const pathname = usePathname();
+  const dispatch = useDispatch();
+  const { totalItems, cart } = useSelector((store) => store.cart);
+  // const [theme, setTheme] = useState(
+  //   global?.localStorage?.getItem("theme")
+  //     ? global?.localStorage?.getItem("theme")
+  //     : "winter"
+  // );
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
-    const localTheme = localStorage.getItem("theme");
-    document.documentElement.setAttribute("data-theme", localTheme);
-  }, [theme]);
+    dispatch(total());
+  }, [cart]);
 
   return (
-    <main className="navbar">
-      <div className="navbar-start">Logo</div>
+    <main className="navbar fixed z-50 backdrop-blur-lg">
+      <div className="navbar-start">
+        <Image src={icon.logo} alt="logo" />
+      </div>
       <ul className="navbar-center list-none flex justify-center items-center gap-3">
-        <li>
-          <Link href="#">Home</Link>
-        </li>
-        <li>
-          <Link href="#">Menu</Link>
-        </li>
-        <li>
-          <Link href="#">About</Link>
-        </li>
-        <li>
-          <Link href="#">Contact</Link>
-        </li>
+        {router.map((nav) => {
+          return (
+            <li key={nav.id}>
+              <Link
+                href={nav.path}
+                className={
+                  pathname == nav.path
+                    ? "text-info"
+                    : "text-base hover:text-info"
+                }
+              >
+                {nav.name}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
       <div className="navbar-end flex items-center gap-2">
-        <label className="swap swap-rotate">
-          <input
-            type="checkbox"
-            className="theme-controller"
-            onChange={handleToggle}
-            checked={theme === "nord" ? false : true}
-          />
-          <Image
-            className="dark:invert swap-off w-8 h-8"
-            src={icon.sun}
-            alt="light"
-          />
-          <Image
-            className="dark:invert swap-on w-8 h-8"
-            src={icon.moon}
-            alt="dark"
-          />
-        </label>
-        <Image
-          className="dark:invert"
-          src={icon.languageIcon}
-          alt="laguage-icon"
-        />
+        <div className="drawer drawer-end w-auto">
+          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            {/* Page content here */}
+            <label htmlFor="my-drawer" className=" drawer-button">
+              <div role="button" className="btn btn-ghost btn-circle">
+                <div className="indicator z-0">
+                  <Image src={icon.cart} alt="cart" width={30} height={30} />
+                  <span className="badge badge-sm indicator-item">
+                    {totalItems}
+                  </span>
+                </div>
+              </div>
+            </label>
+          </div>
+          <div className="drawer-side overflow-x-hidden">
+            <label
+              htmlFor="my-drawer"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
+            <ul className="menu p-4 w-[21rem] min-h-full bg-base-200 text-base-content absolute z-50">
+              {/* Sidebar content here */}
+              <Cart />
+            </ul>
+          </div>
+        </div>
+        <div className="dropdown dropdown-end static">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+            <div className="w-10 rounded-full">
+              <Image
+                alt="Avatar"
+                src="https://api.multiavatar.com/kathrin.svg"
+                width={40}
+                height={40}
+              />
+            </div>
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 "
+          >
+            <li>
+              <Link href="#">Profile</Link>
+            </li>
+            <li>
+              <Link href="#">Settings</Link>
+            </li>
+            <li>
+              <Link href="#">Logout</Link>
+            </li>
+          </ul>
+        </div>
       </div>
     </main>
   );
