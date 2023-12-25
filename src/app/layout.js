@@ -17,7 +17,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="winter">
+    <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
           <Header />
