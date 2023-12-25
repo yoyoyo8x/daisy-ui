@@ -15,13 +15,14 @@ export const metadata = {
   description: "Make for fun, that for sure",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, modal }) {
   return (
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
           <Header />
           {children}
+          {modal}
           <Footer />
         </ReduxProvider>
       </body>
