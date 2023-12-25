@@ -7,6 +7,7 @@ export { default as cart } from "./Header/cart.svg";
 // MENU
 export { default as EmptyCart } from "./Menu/emptyCart.svg";
 export { default as NotFound } from "./Menu/NotFound.svg";
+export { default as filter } from "./Menu/filter.svg";
 
 // CONTACT
 export { default as car } from "./Contact/car-img.svg";
