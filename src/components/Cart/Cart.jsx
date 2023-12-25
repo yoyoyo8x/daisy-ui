@@ -88,7 +88,7 @@ function Cart() {
             </div>
             <div className="w-full flex items-center justify-between">
               <p className="">Total</p>
-              <p className="">${totalPrice + 2.5}</p>
+              <p className="">${totalPrice + 2.50}</p>
             </div>
           </div>
           <button className="btn bg-[#f14b4b] rounded-full w-full text-white mt-8 hover:text-base-content hover:bg-[#80bdfe]">

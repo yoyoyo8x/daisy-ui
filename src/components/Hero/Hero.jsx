@@ -11,7 +11,7 @@ function Hero() {
             asperiores corporis velit nostrum dolor voluptate molestias, animi
             voluptatem fugit dolore.
           </p>
-          <Link href="/menu" className="btn btn-primary">
+          <Link href="/shop" className="btn btn-primary">
             <span>Shop Now</span>
           </Link>
         </div>
