@@ -4,8 +4,9 @@ import { getProduct } from "@/service/product.service";
 export const menuSlice = createSlice({
   name: "product",
   initialState: {
-    cate: [],
     list: [],
+    cate: [],
+    brand: [],
     isLoading: false,
   },
   reducers: {},
@@ -17,7 +18,8 @@ export const menuSlice = createSlice({
     builder.addCase(getProduct.fulfilled, (state, action) => {
       state.isLoading = false;
       state.list = action.payload;
-      state.cate = [...new Set(action.payload?.map((item) => item.category))];
+      state.cate = [...new Set(action.payload?.map((item) => item?.category))];
+      state.brand = [...new Set(action.payload?.map((item) => item?.brand))];
     });
     builder.addCase(getProduct.rejected, (state, action) => {
       state.isLoading = false;

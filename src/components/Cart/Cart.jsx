@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import * as icon from "@/assets/index";
 import { increase, decrease, clear } from "@/redux/cartSlice";
@@ -8,20 +9,23 @@ import { BiMinus } from "react-icons/bi";
 import { BiPlus } from "react-icons/bi";
 import { RiRefreshFill } from "react-icons/ri";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { useRef } from "react";
 
 function Cart() {
+  const DrawerRef = useRef(null);
   const dispatch = useDispatch();
   const { totalPrice, cart } = useSelector((store) => store.cart);
+  const { isLogin } = useSelector((store) => store.auth);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 200 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 200 }}
-      className="drop-shadow-md"
-    >
+    <div className="drop-shadow-md">
+      {/* Cart content */}
       <div className="flex justify-between items-center pt-2 pb-10">
-        <motion.div whileTap={{ scale: 0.75 }}>
+        <motion.div
+          whileTap={{ scale: 0.75 }}
+          className="cursor-pointer"
+          onClick={() => (document.getElementById("my-drawer").checked = false)}
+        >
           <MdOutlineKeyboardBackspace className="text-base-info text-2xl" />
         </motion.div>
         <p className="text-base-content font-semibold text-xl ml-8">Cart</p>
@@ -29,11 +33,36 @@ function Cart() {
         <motion.p
           whileTap={{ scale: 0.75 }}
           className="flex items-center gap-1 px-2 py-1 rounded-md cursor-pointer border border-gray-400 hover:shadow-md text-base-content"
-          onClick={() => dispatch(clear())}
+          onClick={() => document.getElementById("clear_modal").showModal()}
         >
           Clear <RiRefreshFill />
         </motion.p>
+        {/* Clear button modal */}
+        <dialog id={`clear_modal`} className="modal">
+          <div className="modal-box !py-10">
+            <p className="pb-6 text-lg text-center">Clear your cart?</p>
+            <form
+              method="dialog"
+              className="grid grid-cols-[repeat(2,100px)] place-content-center gap-4"
+            >
+              {/* if there is a button in form, it will close the modal */}
+              <button
+                className="btn btn-error text-white"
+                onClick={() => {
+                  dispatch(clear());
+                }}
+              >
+                Yes
+              </button>
+              <button className="btn btn-primary text-white">No</button>
+            </form>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
+
       {/* bottom section */}
       {cart && cart.length > 0 ? (
         <div className="w-full h-[calc(100vh-126px)] flex flex-col rounded-full">
@@ -44,7 +73,7 @@ function Cart() {
                 <>
                   <div className="w-full py-1 px-2 rounded-lg flex gap-2 items-center bg-base-100 ">
                     <img
-                      src={item.image}
+                      src={item?.image}
                       alt="product"
                       className="!w-20 !h-20 max-w-[240px]"
                       fill="auto"
@@ -53,7 +82,7 @@ function Cart() {
                     <div className="flex flex-col gap-2">
                       <p className="text-base ">{item?.title}</p>
                       <p className="text-sm block font-semibold">
-                        $ {item?.price * item.amount}
+                        $ {item?.price * item?.amount}
                       </p>
                     </div>
                     {/* Button */}
@@ -61,18 +90,61 @@ function Cart() {
                       <motion.div whileTap={{ scale: 0.75 }}>
                         <BiMinus
                           className="text-base-content"
-                          onClick={() => dispatch(decrease(item))}
+                          onClick={() => {
+                            console.log(item);
+                            if (item?.amount == 1) {
+                              document
+                                .getElementById(`my_modal_${item._id}`)
+                                .showModal();
+                            } else {
+                              dispatch(decrease(item));
+                            }
+                          }}
                         />
                       </motion.div>
                       <p>{item.amount}</p>
                       <motion.div whileTap={{ scale: 0.75 }}>
                         <BiPlus
                           className="text-base-content"
-                          onClick={() => dispatch(increase(item))}
+                          onClick={() => {
+                            dispatch(increase(item));
+                          }}
                         />
                       </motion.div>
                     </div>
                   </div>
+                  {/* Confirm Remove Modal */}
+                  <dialog
+                    key={item.id}
+                    id={`my_modal_${item._id}`}
+                    className="modal"
+                  >
+                    <div className="modal-box !py-10">
+                      <p className="pb-6 text-lg text-center">
+                        Do you want to remove {item?.title} from your cart?
+                      </p>
+                      <form
+                        method="dialog"
+                        className="grid grid-cols-[repeat(2,100px)] place-content-center gap-4"
+                      >
+                        {/* if there is a button in form, it will close the modal */}
+                        <button
+                          className="btn btn-error text-white"
+                          onClick={() => {
+                            dispatch(decrease(item));
+                          }}
+                        >
+                          Yes
+                        </button>
+                        <button className="btn btn-primary text-white">
+                          No
+                        </button>
+                      </form>
+                    </div>
+                    <form method="dialog" className="modal-backdrop">
+                      <button>close</button>
+                    </form>
+                  </dialog>
                 </>
               ))}
           </div>
@@ -88,12 +160,24 @@ function Cart() {
             </div>
             <div className="w-full flex items-center justify-between">
               <p className="">Total</p>
-              <p className="">${totalPrice + 2.50}</p>
+              <p className="">${totalPrice + 2.5}</p>
             </div>
           </div>
-          <button className="btn bg-[#f14b4b] rounded-full w-full text-white mt-8 hover:text-base-content hover:bg-[#80bdfe]">
-            Proceed to checkout
-          </button>
+          {isLogin ? (
+            <button className="btn bg-[#f14b4b] rounded-full w-full text-white mt-8 hover:text-base-content hover:bg-[#80bdfe]">
+              Proceed to checkout
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="btn bg-[#f14b4b] rounded-full w-full text-white mt-8 hover:text-base-content hover:bg-[#80bdfe]"
+              onClick={() =>
+                (document.getElementById("my-drawer").checked = false)
+              }
+            >
+              Login to checkout
+            </Link>
+          )}
         </div>
       ) : (
         <div className="w-full h-[calc(100vh-126px)] flex flex-col items-center justify-center gap-8">
@@ -103,7 +187,7 @@ function Cart() {
           </p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 

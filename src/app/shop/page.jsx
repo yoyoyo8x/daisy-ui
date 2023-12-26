@@ -10,18 +10,19 @@ import * as icon from "@/assets/index";
 
 function Shop() {
   const dispatch = useDispatch();
-  const { list, cate } = useSelector((store) => store.product);
+  const { list, cate, brand } = useSelector((store) => store.product);
   const [filter, setFilter] = useState([]);
+  const [filterBrand, setFilterBrand] = useState([]);
 
   useEffect(() => {
     dispatch(getProduct());
   }, []);
 
-  const handleCheck = (e) => {
+  const handleCheck = (e, setValue) => {
     if (e.target.checked) {
-      setFilter((prevArray) => [...prevArray, e.target.value]);
+      setValue((prevArray) => [...prevArray, e.target.value]);
     } else {
-      setFilter((prevArray) =>
+      setValue((prevArray) =>
         prevArray.filter((item) => item !== e.target.value)
       );
     }
@@ -31,15 +32,18 @@ function Shop() {
     <div className="bg-base-300 py-[67px] px-4">
       <div className="text-center text-3xl mb-8">Products</div>
       {list && list.length > 0 ? (
-        <div className="grid grid-rows-2 grid-flow-col gap-4">
-          {cate && cate.length > 0 ? (
-            <div className="row-span-2 border-r border-r-gray-400 pr-5">
-              <div className="sticky left-0 top-20 ">
-                <div className="flex gap-1 items-center justify-center text-xl font-semibold">
-                  <Image src={icon.filter} alt="filter" className="w-12 h-12" />
-                  FILTER
-                </div>
+        <div className="flex justify-between gap-4">
+          <div className="flex-[1] border-r border-r-gray-400 pr-5">
+            <div className="sticky left-0 top-20 overflow-y-auto h-[calc(100vh-137px)] no-scrollbar">
+              <div className="flex gap-1 items-center justify-center text-xl font-semibold">
+                <Image src={icon.filter} alt="filter" className="w-10 h-10" />
+                FILTER
+              </div>
+              {cate && cate.length > 0 ? (
                 <div className="">
+                  <span className="uppercase text-lg font-medium">
+                    category
+                  </span>
                   {cate?.map((item, index) => (
                     <label className="label cursor-pointer" key={index}>
                       <span className="label-text uppercase">{item}</span>
@@ -47,21 +51,45 @@ function Shop() {
                         type="checkbox"
                         className="checkbox"
                         value={item}
-                        onChange={handleCheck}
+                        onChange={(e) => handleCheck(e, setFilter)}
                       />
                     </label>
                   ))}
                 </div>
-              </div>
+              ) : (
+                ""
+              )}
+              {brand && brand.length > 0 ? (
+                <div className="">
+                  <span className="uppercase text-lg font-medium">brand</span>
+                  {brand?.map((item, index) => (
+                    <label className="label cursor-pointer" key={index}>
+                      <span className="label-text uppercase">{item}</span>
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        value={item}
+                        onChange={(e) => handleCheck(e, setFilterBrand)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
-          ) : (
-            ""
-          )}
+          </div>
 
-          <div className="row-span-2 grid grid-cols-3 place-items-center">
-            {(filter.length == 0
+          <div className="flex-[5] flex flex-wrap justify-center items-center gap-5">
+            {(filter.length == 0 && filterBrand.length == 0
               ? list
-              : list.filter((item) => filter.includes(item.category))
+              : filter.length != 0 && filterBrand.length == 0
+              ? list.filter((item) => filter.includes(item.category))
+              : filter.length == 0 && filterBrand.length != 0
+              ? list.filter((item) => filterBrand.includes(item.brand))
+              : list
+                  .filter((item) => filter.includes(item.category))
+                  .filter((item) => filterBrand.includes(item.brand))
             ).map((item) => (
               <div
                 key={item.id}

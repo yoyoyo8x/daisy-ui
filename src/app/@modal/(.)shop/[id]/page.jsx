@@ -30,7 +30,7 @@ function Product() {
 
   return (
     <Modal>
-      <div className="px-10 grid grid-cols-2 gap-5 text-lg bg-white rounded-md">
+      <div className="px-10 !py-12 grid grid-cols-2 gap-5 text-lg bg-white rounded-md">
         <div
           className="flex justify-center items-center relative cursor-crosshair overflow-hidden"
           ref={containerRef}
