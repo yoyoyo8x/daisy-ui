@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "@/service/product.service";
 import { addToCart } from "@/redux/cartSlice";
 import * as icon from "@/assets/index";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Shop() {
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ function Shop() {
 
   return (
     <div className="bg-base-300 py-[67px] px-4">
-      <div className="text-center text-3xl mb-8">Products</div>
+      <h3 className="text-center text-4xl my-8">Products</h3>
       {list && list.length > 0 ? (
         <div className="flex justify-between gap-4">
           <div className="flex-[1] border-r border-r-gray-400 pr-5">
@@ -80,47 +82,54 @@ function Shop() {
             </div>
           </div>
 
-          <div className="flex-[5] flex flex-wrap justify-center items-center gap-5">
-            {(filter.length == 0 && filterBrand.length == 0
-              ? list
-              : filter.length != 0 && filterBrand.length == 0
-              ? list.filter((item) => filter.includes(item.category))
-              : filter.length == 0 && filterBrand.length != 0
-              ? list.filter((item) => filterBrand.includes(item.brand))
-              : list
-                  .filter((item) => filter.includes(item.category))
-                  .filter((item) => filterBrand.includes(item.brand))
-            ).map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col justify-between items-center relative px-4 py-2 bg-[#fff] border border-gray-300 hover:bg-base-200 rounded-lg backdrop-blur-lg hover:drop-shadow-lg text-center cursor-pointer mb-5"
-              >
-                <Link
-                  href={{ pathname: `/shop/${item._id}` }}
-                  className="w-full flex flex-col gap-2 justify-center items-center"
-                >
-                  <div className="w-full h-full drop-shadow-2xl">
-                    <img className="w-72 h-80" src={item?.image} alt="image" />
-                  </div>
-                  <p className="text-base-content">{item?.title}</p>
-                </Link>
-                <div className="w-full flex flex-col justify-between gap-2">
-                  <div className="text-base-content">
-                    <p className="text-lg font-medium text-red-500">
-                      ${item?.price}
-                    </p>
-                  </div>
+          {/* Toast */}
+          <ToastContainer autoClose={2000} position="top-center" />
 
-                  <motion.div
-                    whileTap={{ scale: 0.75 }}
-                    className="w-full rounded-full cursor-pointer p-2 border border-base-content hover:shadow-md hover:text-base-100 hover:bg-base-content"
-                    onClick={() => dispatch(addToCart(item))}
+          <div className="flex-[6] grid grid-cols-[repeat(auto-fit,300px)] auto-rows-min justify-center gap-5 max-h-fit">
+            {list
+              .filter(
+                (item) =>
+                  (filter.length === 0 || filter.includes(item.category)) &&
+                  (filterBrand.length === 0 || filterBrand.includes(item.brand))
+              )
+              .map((item) => (
+                <div
+                  key={item.id}
+                  className=" flex-col justify-between items-center relative px-4 py-2 bg-[#fff] border border-gray-300 hover:bg-base-200 rounded-lg backdrop-blur-lg hover:drop-shadow-lg text-center cursor-pointer mb-5"
+                >
+                  <Link
+                    href={`/shop/${item._id}`}
+                    className="w-full flex flex-col gap-2 justify-center items-center"
                   >
-                    <div>+ Add to cart</div>
-                  </motion.div>
+                    <div className="w-full h-full drop-shadow-2xl">
+                      <img
+                        className="w-72 h-80"
+                        src={item?.image}
+                        alt="image"
+                      />
+                    </div>
+                    <p className="text-base-content">{item?.title}</p>
+                  </Link>
+                  <div className="w-full flex flex-col justify-between gap-2">
+                    <div className="text-base-content">
+                      <p className="text-lg font-medium text-red-500">
+                        ${item?.price}
+                      </p>
+                    </div>
+
+                    <motion.div
+                      whileTap={{ scale: 0.75 }}
+                      className="w-full rounded-full cursor-pointer p-2 border border-base-content hover:shadow-md hover:text-base-100 hover:bg-base-content"
+                      onClick={() => {
+                        dispatch(addToCart(item));
+                        toast.success("Added to cart successfully!");
+                      }}
+                    >
+                      <div>+ Add to cart</div>
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       ) : (

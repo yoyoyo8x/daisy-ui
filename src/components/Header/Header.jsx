@@ -27,7 +27,7 @@ const Header = () => {
   }, [cart]);
 
   return (
-    <main className="navbar fixed z-50 backdrop-blur-lg">
+    <main className="navbar fixed z-50 bg-white">
       <div className="navbar-start">
         <Image src={icon.logo} alt="logo" />
       </div>
@@ -39,7 +39,7 @@ const Header = () => {
                 href={nav.path}
                 className={
                   pathname == nav.path
-                    ? "text-info"
+                    ? "text-blue-600"
                     : "text-base hover:text-info"
                 }
               >

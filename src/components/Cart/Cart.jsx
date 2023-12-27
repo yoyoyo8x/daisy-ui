@@ -91,7 +91,6 @@ function Cart() {
                         <BiMinus
                           className="text-base-content"
                           onClick={() => {
-                            console.log(item);
                             if (item?.amount == 1) {
                               document
                                 .getElementById(`my_modal_${item._id}`)
